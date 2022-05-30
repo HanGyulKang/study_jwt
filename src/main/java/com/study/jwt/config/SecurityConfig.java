@@ -21,7 +21,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // Filter
-        // BasicAuthenticationFilter 얘가 스프링 시큐리티 필터 전에 실행되기 때문에 쟤를 넣어 줌...
+        // BasicAuthenticationFilter 얘가 스프링 시큐리티 필터 전에 실행되기 때문에 쟤를 넣어 줌...(다른 애 넣어줘도 됨)
         // 스프링 시큐리티 필터가 아니라서 스프링 시큐리티 필터가 돌기 전에 만든 필터를 호출해야 함
         // 생으로 만든 필터는 스프링 시큐리티 필터보다 뒤에 실행 됨
         http.addFilterBefore(new MyFilter3(), BasicAuthenticationFilter.class);

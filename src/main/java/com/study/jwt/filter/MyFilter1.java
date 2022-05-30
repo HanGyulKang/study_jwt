@@ -1,6 +1,8 @@
 package com.study.jwt.filter;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -14,13 +16,12 @@ public class MyFilter1 implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         System.out.println("필터-1");
-
         // 다시 필터 타게끔 설정
         // PrintWriter writer = response.getWriter();
         // writer.println("안녕");
         // 이래버리면 프로그램이 여기서 그냥 끝남
         // 다시 체인에 넘겨줘야 프로그램이 계속 돌아 감
-        chain.doFilter(request, response);
+         chain.doFilter(request, response);
     }
 
     @Override

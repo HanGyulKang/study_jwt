@@ -15,7 +15,7 @@ public class FilterConfig {
         // 모든 url에서 다 돌아라
         myFilter1Bean.addUrlPatterns("/*");
         // 낮은 번호가 필터중에 가장 먼저 실행 됨
-        myFilter1Bean.setOrder(0);
+        myFilter1Bean.setOrder(1);
         return myFilter1Bean;
     }
 
@@ -26,7 +26,7 @@ public class FilterConfig {
         // 모든 url에서 다 돌아라
         myFilter2Bean.addUrlPatterns("/*");
         // 낮은 번호가 필터중에 가장 먼저 실행 됨
-        myFilter2Bean.setOrder(1);
+        myFilter2Bean.setOrder(0);
         return myFilter2Bean;
     }
 }
