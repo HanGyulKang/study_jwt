@@ -2,6 +2,7 @@ package com.study.jwt.config;
 
 import com.study.jwt.filter.MyFilter1;
 import com.study.jwt.filter.MyFilter3;
+import com.study.jwt.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -49,12 +50,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                  * 그래서 Http 기본 인증방식을 사용하지 않음(Disable)
                  */
                 .httpBasic().disable() // 기본적인 Http 로그인 방식을 사용하지 않겠다(기본 인증 방식).
+                /**
+                 * WebSecurityConfigurerAdapter가 들고있는 AuthenticationManager를 파라미터로 던져줘야 함
+                 */
+                .addFilter(new JwtAuthenticationFilter(authenticationManager()))
                 .authorizeRequests()
                 .antMatchers("/api/v1/user/**")
                     .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
                 .antMatchers("/api/v1/manager/**")
                     .access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
                 .antMatchers("/api/v1/admin/**")
-                    .access("hasRole('ROLE_ADMIN')");
+                    .access("hasRole('ROLE_ADMIN')")
+                .anyRequest().permitAll()
+                .and()
+                .formLogin()
+                .loginProcessingUrl("/login");
     }
 }
