@@ -2,10 +2,9 @@ package com.study.jwt.filter;
 
 import javax.servlet.*;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 // Filter를 구현하면 얘가 필터가 됨
-public class MyFilter1 implements Filter {
+public class MyFilter2 implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         Filter.super.init(filterConfig);
@@ -13,7 +12,7 @@ public class MyFilter1 implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        System.out.println("필터-1");
+        System.out.println("필터-2");
 
         // 다시 필터 타게끔 설정
         // PrintWriter writer = response.getWriter();

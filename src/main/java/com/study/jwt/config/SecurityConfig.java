@@ -1,11 +1,14 @@
 package com.study.jwt.config;
 
+import com.study.jwt.filter.MyFilter1;
+import com.study.jwt.filter.MyFilter3;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
 
 @Configuration
@@ -17,6 +20,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        // Filter
+        // BasicAuthenticationFilter 얘가 스프링 시큐리티 필터 전에 실행되기 때문에 쟤를 넣어 줌...
+        // 스프링 시큐리티 필터가 아니라서 스프링 시큐리티 필터가 돌기 전에 만든 필터를 호출해야 함
+        // 생으로 만든 필터는 스프링 시큐리티 필터보다 뒤에 실행 됨
+        http.addFilterBefore(new MyFilter3(), BasicAuthenticationFilter.class);
+
         http.csrf().disable();
 
         // 23 line ~ 30 line 까지는 JWT 서버 셋팅에 필수
