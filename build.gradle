@@ -42,8 +42,8 @@ dependencies {
 	 -> 이걸 해결해주는 라이브러리가 java-jwt
 	 */
 	implementation 'com.auth0:java-jwt:3.19.2'
-
-
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+	implementation 'org.keycloak:keycloak-core:18.0.0'
 }
 
 tasks.named('test') {
