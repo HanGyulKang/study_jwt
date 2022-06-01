@@ -1,17 +1,21 @@
 package com.study.jwt;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.RSAKeyProvider;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.impl.JWTParser;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.interfaces.JWTVerifier;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.crypto.JwtSignatureValidator;
+import io.jsonwebtoken.impl.crypto.JwtSigner;
 import org.junit.jupiter.api.Test;
 import org.keycloak.common.util.PemUtils;
+import org.springframework.util.Base64Utils;
+import org.yaml.snakeyaml.util.UriEncoder;
 
 import java.security.*;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.util.Base64;
 import java.util.Date;
 
@@ -53,10 +57,14 @@ public class JwtRsaTest {
         PrivateKey privateKey = PemUtils.decodePrivateKey(lowPrivateKey);
 
         String encodedPublicKey = Base64.getEncoder().encodeToString(publicKey.getEncoded());
-        System.out.println(encodedPublicKey);
-        System.out.println(convertToPublicKey(encodedPublicKey));
+//        System.out.println(encodedPublicKey);
+//        System.out.println(convertToPublicKey(encodedPublicKey));
 
-        String token = generateJwtToken(privateKey);
+        String token = generateJwtToken(privateKey, userId);
+//        System.out.println("TOKEN : " + token);
+
+
+        printStructure(token, publicKey);
 
 //        System.out.println("TOKEN:");
 //        System.out.println(token);
@@ -74,11 +82,12 @@ public class JwtRsaTest {
 
 
     @SuppressWarnings("deprecation")
-    public String generateJwtToken(PrivateKey privateKey) {
-        String token = Jwts.builder().setSubject("adam")
-                .setExpiration(new Date(2018, 1, 1))
-                .setIssuer("info@wstutorial.com")
-                .claim("groups", new String[] { "user", "admin" })
+    public String generateJwtToken(PrivateKey privateKey, String userId) {
+        String token = Jwts.builder().setSubject("test")
+                .setExpiration(new Date(2022, 6, 3))
+                .setIssuer("test@test.com")
+                .claim("userId", userId)
+                .claim("userNumber", "2698501299910")
                 // RS256 with privateKey
                 .signWith(SignatureAlgorithm.RS256, privateKey).compact();
         return token;
@@ -86,21 +95,52 @@ public class JwtRsaTest {
 
     //Print structure of JWT
     public void printStructure(String token, PublicKey publicKey) {
+        // JWT TOKEN DECODING - 1
         Jws parseClaimsJws = Jwts.parser().setSigningKey(publicKey)
                 .parseClaimsJws(token);
 
-        System.out.println("Header     : " + parseClaimsJws.getHeader());
-        System.out.println("Body       : " + parseClaimsJws.getBody());
-        System.out.println("Signature  : " + parseClaimsJws.getSignature());
+//        System.out.println("Header     : " + parseClaimsJws.getHeader());
+//        System.out.println("Body       : " + parseClaimsJws.getBody());
+//        System.out.println("Signature  : " + parseClaimsJws.getSignature());
+
+        // JWT TOKEN DECODING - 2
+        DecodedJWT decodedJWT = JWT.decode(token);
+        System.out.println(decodedJWT.getClaims());
+
+        JWTVerifier jwtVerifier = new JWTVerifier() {
+            @Override
+            public DecodedJWT verify(String token) throws JWTVerificationException {
+                return JWT.decode(token);
+            }
+
+            @Override
+            public DecodedJWT verify(DecodedJWT jwt) throws JWTVerificationException {
+                return null;
+            }
+        };
+
+
+//        System.out.println("Header      : " + decodedJWT.getHeader());
+//        System.out.println("Payload     : " + decodedJWT.getPayload());
+//        System.out.println("Signature   : " + decodedJWT.getSignature());
+
+
+        String Header = decodedJWT.getHeader();
+        String Payload = decodedJWT.getPayload();
+        String Signature = decodedJWT.getSignature();
+        System.out.println(jwtVerifier.verify(token));
+
+
+
     }
 
 
     // Add BEGIN and END comments
     private String convertToPublicKey(String key){
         StringBuilder result = new StringBuilder();
-        result.append("-----BEGIN PUBLIC KEY-----\n");
+//        result.append("-----BEGIN PUBLIC KEY-----\n");
         result.append(key);
-        result.append("\n-----END PUBLIC KEY-----");
+//        result.append("\n-----END PUBLIC KEY-----");
         return result.toString();
     }
 }
